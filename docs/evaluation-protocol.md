@@ -42,4 +42,4 @@ Confidence: optionally bootstrap by **time blocks** (not IID transaction rows); 
 - `reports/decision_experiments.csv`: strategy + scenario + threshold + confusion and cost.
 - `reports/error_cases.csv`: redacted feature-only samples, no identifiable account IDs.
 - `reports/limitations.md`: observed failure cases and simulator limitations.
-- `docs/verification-log.md`: actual tests and commands. No invented test pass or figures.
+- `docs/verification-summary.md`: public commands, completed outcomes and testing limits. The detailed development log is local and gitignored; no invented test pass or figures.

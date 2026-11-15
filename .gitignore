@@ -6,7 +6,8 @@
 *.csv
 !docs/**/*.csv
 !reports/*.csv
-/services/ml/artifacts/
+/services/ml/artifacts/*
+!/services/ml/artifacts/README.md
 /reports/generated/
 /reports/*_predictions.jsonl
 # Python

@@ -3,8 +3,11 @@
 | Document | Purpose |
 |---|---|
 | `HOW_IT_WORKS_RU.md` | Подробный пошаговый разбор работы всей системы на русском |
-| `running.md` | Verified local launch, dependency setup and frozen experiment restrictions |
+| `running.md` | Container and standalone launch, artifact setup and frozen experiment restrictions |
+| `deployment.md` | Three-container topology, pinned model delivery and operating limits |
+| `deployment-verification.md` | Container checks, build networking and remaining delivery limits |
 | `dashboard.md` | UI contracts and AppTest evidence |
+| `verification-summary.md` | Public completed checks, commands, evidence and testing limits |
 | `evaluation-run.md` | Actual evaluation workflow, tests and artifact schema |
 | `architecture.md` | Layered architecture, contracts, decisions, failure modes |
 | `data-contract.md` | Confirmed PaySim facts, feature restrictions, chronological partitions |

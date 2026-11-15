@@ -1,0 +1,8 @@
+# Direct runtime requirements; every transitive version is constrained by the
+# original, unchanged verified environment lock.
+-c requirements.lock.txt
+fastapi==0.163.0
+uvicorn==0.54.0
+pandas==2.3.3
+scikit-learn==1.9.1
+joblib==1.6.0

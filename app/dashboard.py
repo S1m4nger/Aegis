@@ -4,13 +4,12 @@ import csv
 import json
 import math
 import os
-import urllib.error
-import urllib.parse
-import urllib.request
 
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+
+from api_config import configured_api_url, post_json
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = Path(os.environ.get("AEGIS_REPORTS_DIR", str(ROOT / "reports")))
@@ -50,23 +49,7 @@ def load_csv(name):
 
 
 def api_post(base, route, payload):
-    parsed = urllib.parse.urlsplit(base)
-    if parsed.scheme not in ("http", "https") or not parsed.netloc or parsed.username or parsed.password or parsed.query or parsed.fragment:
-        raise ValueError("Enter an HTTP(S) Go API address without credentials, query or fragment.")
-    request = urllib.request.Request(base.rstrip("/") + route, data=json.dumps(payload, allow_nan=False).encode(), headers={"Content-Type": "application/json"}, method="POST")
-    try:
-        with urllib.request.urlopen(request, timeout=5) as response:
-            content = response.read(128 * 1024 + 1)
-            if len(content) > 128 * 1024:
-                raise ValueError("API response exceeded the display limit")
-            result = json.loads(content)
-    except urllib.error.HTTPError as error:
-        raise ValueError(f"Go API returned HTTP {error.code}. Check the API and model readiness.") from None
-    except (urllib.error.URLError, TimeoutError, OSError):
-        raise ValueError("Go API could not be reached. Start the Go API and trained Python scorer, then retry.") from None
-    if not isinstance(result, dict):
-        raise ValueError("Go API returned an invalid response")
-    return result
+    return post_json(base, route, payload)
 
 
 def chart(figure, title, y_title="", x_title=""):
@@ -261,6 +244,11 @@ def lab(api, metrics):
 
 def main():
     st.set_page_config(page_title="Aegis AI · Fraud Intelligence", page_icon="◇", layout="wide")
+    try:
+        api = configured_api_url()
+    except ValueError:
+        st.error("Application configuration is invalid. Ask the operator to check AEGIS_API_URL.")
+        st.stop()
     st.markdown("""<style>
     .stApp {background:#0a1020;color:#e2e8f3;}
     .block-container {max-width:1280px;padding-top:2.2rem;padding-bottom:3rem;}
@@ -272,7 +260,6 @@ def main():
     st.title("See the signal. Inspect the disagreement.")
     st.write("Hybrid fraud intelligence on synthetic PaySim transactions, with transparent rules and measured trade-offs.")
     st.warning("This project is a prototype and is not financial advice.")
-    api = st.sidebar.text_input("Go API address", "http://127.0.0.1:8080")
     st.sidebar.caption("Go owns rules and decisions. Python serves the trained model. This dashboard displays results.")
     st.sidebar.divider()
     st.sidebar.write("**Evidence discipline**")

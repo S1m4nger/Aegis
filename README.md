@@ -4,29 +4,55 @@
 
 **Status: trained and evaluated locally. Submission has not been completed.**
 
+**Main finding:** on 196,601 held-out transactions, Simple Hybrid detected **502 of 2,148 frauds** and missed **1,646 (76.6%)**. Conflict-Aware improved Average Precision but did not improve F1 or simulated cost over Simple Hybrid. This is a measured trade-off, not a deployment-ready fraud prevention claim.
+
 ## Problem / audience
 An imagined analyst for a small payment service needs to balance missed suspicious transactions against burdensome reviews. Aegis AI prototypes an explainable policy, not a real payment processing service.
 
 ## Architecture
 Go (Uber Fx, Zap, chi) API & orchestration -> Python FastAPI ML scoring -> Go JSON AST rules + conflict fusion + cost-aware actions -> Streamlit visualization. See `docs/architecture.md`.
 
-## Data
-Source: [PaySim on Kaggle](https://www.kaggle.com/datasets/ealaxi/paysim1), synthetic 6,362,620 rows / 8,213 fraud labels. `sample_submission` zip in original upload belongs to another competition and is excluded. We exclude balance columns and simulator flag to avoid leakage; see `docs/data-contract.md`.
+## Run the application
 
-## Reproducible setup
-See [running instructions](docs/running.md), [documentation](docs/INDEX.md). Work from the repository root. The verified local environment uses Python 3.12.15 and Go `1.27.3-X:nodwarf5`; Go module minimum is 1.24. CSV/ZIP and trained artifacts are not committed.
+For standalone local execution with Python3.12 and Go1.24+:
 
 ```bash
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -r services/ml/requirements.lock.txt
-.venv/bin/python scripts/prepare_data.py --zip '/path/to/archive(1).zip'
-.venv/bin/python -m services.ml.train --data data/raw/paysim.csv
-cd services/orchestrator
-go mod download
-go run ./cmd/aegis
+make artifacts
+(cd services/orchestrator && go mod download)
 ```
 
-Run the private scorer separately with `.venv/bin/uvicorn services.ml.app:app --host 127.0.0.1 --port 8091` from the root. Training fits the model and calibrator only; it does **not** evaluate final-test performance. See `docs/training.md` for provenance and restrictions.
+Then run `make ml-api`, `make go-api` and `make dashboard` in three terminals. Open **http://127.0.0.1:8501**. `AEGIS_API_URL` is a validated server-side setting, defaulting to `http://127.0.0.1:8080`; dashboard visitors cannot change the upstream destination. See [running instructions](docs/running.md).
+
+The live analyzer and scenario lab passed from an isolated publishable source copy after downloading the pinned model, without the raw dataset. That check reused installed dependencies; a fresh-machine dependency installation is not claimed. See [verification evidence](docs/deployment-verification.md).
+
+### Optional Docker Compose packaging
+
+Use Docker Engine with Docker Compose v2.20+ from the repository root:
+
+```bash
+docker compose up --build --wait
+```
+
+Open **http://127.0.0.1:8501**. Only the web interface is published by default. The web container calls `http://api:8080`; Go calls the internal scorer at `http://ml:8091`. No source-code bind mounts, development reloaders, database or broker are required. Stop the application with `docker compose down`.
+
+Container builds and live Compose checks passed: analyzer, 15 scenario comparisons, dashboard, ML outage/recovery and shutdown. On this Omarchy host, outbound HTTPS through Docker bridge failed, so dependency downloads used **host networking during build only**; runtime networks and isolation follow the original Compose file. For the verified build command and evidence, see the [deployment guide](docs/deployment.md) and [verification record](docs/deployment-verification.md). Packaging does not change the prototype's research limitations.
+
+## Frozen model delivery
+
+The ML image downloads version **`paysim-lr-6035ac438abfb769`** during its build. [The artifact manifest](configs/model-artifacts.json) pins an immutable [GitHub artifact commit](https://github.com/S1m4nger/Aegis/tree/dfd7a087202702c87f1b899b293a0d88f8cb6483/models/paysim-lr-6035ac438abfb769), exact byte sizes and SHA-256 values for the model, calibrator and metadata. Downloads and metadata are checked before installation; the scorer checks model/calibrator hashes again before loading. No floating `latest` model is used.
+
+This controlled public artifact source is a separate artifact-only branch, not a GitHub Release. The files are the unchanged frozen LR outputs. Model binaries and raw PaySim data are not committed to the application source or copied from local files into images. A clean checkout needs internet access for base images, dependencies and this pinned bundle, but no PaySim download or retraining.
+
+## Data
+
+Training/evaluation used the original [PaySim dataset](https://www.kaggle.com/datasets/ealaxi/paysim1): **6,362,620 synthetic rows / 8,213 fraud labels**. Raw data is needed only for a separate training reproduction, not application startup. It is excluded from Git and Docker images. The unrelated `sample_submission` file is excluded. Balance columns and simulator flags are excluded from model features; see [the data contract](docs/data-contract.md).
+
+## Model and experiment
+The base model is scikit-learn **Logistic Regression**, followed by a logistic score calibrator fitted on a separate later window. It is a compact, reproducible baseline for imbalanced tabular data. The shared training/inference transform uses only transaction `type`, `amount_log = log(1 + amount)` and `hour = (step - 1) % 24`; type is one-hot encoded and numeric inputs are scaled. Account identifiers, balances, target and simulator flags are excluded from features.
+
+Training uses steps 1–400, calibration 401–470, policy selection 471–550 and final test 551–743. The raw PaySim archive is only needed to audit data preparation or reproduce training. The downloaded frozen model and saved evidence can be used without the raw dataset. Full method: [evaluation protocol](docs/evaluation-protocol.md).
 
 ## Results
 Final chronological test: **196,601 transactions, 2,148 fraud labels**, steps 551–743. All policies were frozen on selection before one final scoring run. Source: `reports/model_metrics.json` and `reports/final-evaluation.lock`.
@@ -52,11 +78,17 @@ Costs are arbitrary scenario units per 1,000 test transactions; actions and capa
 
 For the simple hybrid, a legitimate TRANSFER at step 555 with amount 2,375,178.33 was a false alert; a fraudulent TRANSFER at step 551 with amount 879,321.88 was missed. These amounts are simulated units. Within the held-out period fraud prevalence varied from 0.589% (steps 551–600) to 4.290% (701–743), while recall stayed near 22–25%. No real demographic fairness claim is possible.
 
-## What was tested
-Whether independent rule/ML disagreement-aware handling + cost-aware policy improves decision outcomes compared with standard strategies on held-out time periods. The measured outcome above does not establish an advantage over simple fusion.
+## What we added and tested
+Beyond a plain fraud classifier, Aegis adds a safe Go JSON rule tree with explanations, explicit rule/ML disagreement groups, a cost-aware review policy under a fixed offline capacity, and the same Go decision functions in the live API and batch experiment. We tested whether these additions improved results over simple rules, ML and weighted fusion. The measured outcome does not establish an advantage for conflict handling over simple fusion.
+
+## Next steps
+Validate on a separate public data source to test generalization, and investigate richer features that are demonstrably available before a transaction decision. Any new experiment needs a new validation/test design; the current final test must not be reused to tune parameters.
 
 ## Limitations
 Synthetic simulator, large temporal prevalence drift, simplistic interpretable input fields, no real cost labels, no privacy/demographic fairness data, not suitable for live blocking. Score is not guaranteed to be probability.
+
+## Licence
+The project code is under the [MIT licence](LICENSE), copyright S1m4nger. Permitting reuse of the code does not make downstream users coauthors of this contest entry. PaySim is third-party data, obtained from its original provider and subject to its own licence; it is not distributed in the deployment images or relicensed under MIT. Attribution is recorded in [credits](docs/credits.md).
 
 ## Credits
 PaySim authors/provider, Go/Python OSS and AI assistants (including ChatGPT and OpenAI Codex) detailed in `docs/credits.md`. This is a SOLO participant entry; no fictitious teammates.

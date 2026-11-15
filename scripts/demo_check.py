@@ -12,6 +12,7 @@ import tempfile
 import time
 import urllib.error
 import urllib.request
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -61,7 +62,7 @@ def verify_batch_parity(temporary, env):
             assert status == 200, result
             online.append(result)
             stream.write(json.dumps({**tx, "fraud": False, "ml_score": result["ml_score"]}) + "\n")
-    subprocess.run(["go", "run", "./cmd/evaluate", "score", "--window", "selection",
+    subprocess.run(["go", "run", "-buildvcs=false", "./cmd/evaluate", "score", "--window", "selection",
                     "--input", str(source), "--output", str(output)],
                    cwd=ROOT / "services/orchestrator", env=env, check=True)
     offline = [json.loads(line)[strategy] for line in output.read_text().splitlines()]
@@ -98,15 +99,17 @@ def verify_scenarios_and_dashboard():
             measured = metrics["cost_scenarios"][scenario["id"]][row["strategy"]]
             assert math.isclose(row["total_simulated_cost"], measured["total_simulated_cost"], rel_tol=1e-9, abs_tol=1e-5)
             comparisons += 1
-    ui = AppTest.from_file(str(ROOT / "app/dashboard.py"), default_timeout=20).run()
-    assert not ui.exception
-    ui.text_input[0].set_value("http://127.0.0.1:18080").run()
-    next(button for button in ui.button if button.label == "Analyze transaction").click().run()
-    assert not ui.exception
-    assert ui.session_state["last_analysis"][1]["model_version"] == metrics["model_version"]
-    next(button for button in ui.button if button.label == "Recalculate scenario in Go").click().run()
-    assert not ui.exception
-    assert any("Hypothetical scenario only." in item.value for item in ui.info)
+    with patch.dict(os.environ, {"AEGIS_API_URL": "http://127.0.0.1:18080",
+                                 "AEGIS_REPORTS_DIR": str(ROOT / "reports")}):
+        ui = AppTest.from_file(str(ROOT / "app/dashboard.py"), default_timeout=20).run()
+        assert not ui.exception
+        assert not ui.text_input, "API origin must remain server-owned"
+        next(button for button in ui.button if button.label == "Analyze transaction").click().run()
+        assert not ui.exception
+        assert ui.session_state["last_analysis"][1]["model_version"] == metrics["model_version"]
+        next(button for button in ui.button if button.label == "Recalculate scenario in Go").click().run()
+        assert not ui.exception
+        assert any("Hypothetical scenario only." in item.value for item in ui.info)
     assert report_path.read_bytes() == before
     return {"status": "passed", "scenario_strategy_comparisons": comparisons,
             "live_ui_analyzer": True, "live_ui_cost_lab": True, "final_report_unchanged": True}
@@ -124,7 +127,7 @@ def main():
     try:
         with tempfile.TemporaryDirectory(prefix="aegis-demo-") as temporary, (generated / "demo-ml.log").open("w") as ml_log, (generated / "demo-go.log").open("w") as go_log:
             binary = str(Path(temporary) / "aegis")
-            subprocess.run(["go", "build", "-o", binary, "./cmd/aegis"], cwd=ROOT / "services/orchestrator", env=env, check=True)
+            subprocess.run(["go", "build", "-buildvcs=false", "-o", binary, "./cmd/aegis"], cwd=ROOT / "services/orchestrator", env=env, check=True)
             ml = subprocess.Popen([str(ROOT / ".venv/bin/uvicorn"), "services.ml.app:app", "--host", "127.0.0.1", "--port", "18091"], cwd=ROOT, env=env, stdout=ml_log, stderr=ml_log)
             processes.append(ml)
             go = subprocess.Popen([binary], cwd=ROOT, env=env, stdout=go_log, stderr=go_log)

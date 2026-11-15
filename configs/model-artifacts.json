@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "model_version": "paysim-lr-6035ac438abfb769",
+  "source_commit": "90e235e30449ba382eef90b1d908c506c3a103f7",
+  "files": {
+    "model.joblib": {
+      "sha256": "d8b0c144e09f4d905513a75afa6824a4c9c94a0e13ff7f4bca92b9f357c071cf",
+      "size": 3233
+    },
+    "calibrator.joblib": {
+      "sha256": "4d411609cfc0b3176ce77ed8e3c1919e0cf45117abc91d61a4db92e1a870b370",
+      "size": 863
+    },
+    "metadata.json": {
+      "sha256": "7f991f6e25a2c42586dbb9ea13c4b3303d647145abc742842a16287f3de586dd",
+      "size": 586
+    }
+  },
+  "artifact_commit": "dfd7a087202702c87f1b899b293a0d88f8cb6483",
+  "base_url": "https://raw.githubusercontent.com/S1m4nger/Aegis/dfd7a087202702c87f1b899b293a0d88f8cb6483/models/paysim-lr-6035ac438abfb769",
+  "source_dataset_sha256": "16910f90577b0d981bf8ff289714510bb89bc71bff7d3f220f024e287e4eea6b"
+}

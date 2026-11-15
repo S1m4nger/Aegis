@@ -1,0 +1,93 @@
+name: aegis
+
+services:
+  ml:
+    image: aegis-ml:paysim-lr-6035ac438abfb769
+    build:
+      context: .
+      dockerfile: services/ml/Dockerfile
+    init: true
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:size=67108864,mode=1777
+    expose: ["8091"]
+    networks: [backend]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8091/health/ready', timeout=3).close()"]
+      interval: 15s
+      timeout: 4s
+      start_period: 30s
+      retries: 3
+    stop_grace_period: 15s
+    mem_limit: 768m
+    pids_limit: 128
+
+  api:
+    image: aegis-api:1.0.0
+    build:
+      context: .
+      dockerfile: services/orchestrator/Dockerfile
+    init: true
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      AEGIS_HTTP_ADDR: 0.0.0.0:8080
+      AEGIS_ML_URL: http://ml:8091
+      AEGIS_RULES_PATH: /app/configs/rules.json
+      AEGIS_POLICY_PATH: /app/configs/policy.json
+      AEGIS_ML_TIMEOUT_MS: "2500"
+    expose: ["8080"]
+    networks: [frontend, backend]
+    depends_on:
+      ml:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, /app/healthcheck]
+      interval: 15s
+      timeout: 4s
+      start_period: 10s
+      retries: 3
+    stop_grace_period: 15s
+    mem_limit: 256m
+    pids_limit: 64
+
+  web:
+    image: aegis-web:1.0.0
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    init: true
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      AEGIS_API_URL: http://api:8080
+      AEGIS_REPORTS_DIR: /app/reports
+    tmpfs:
+      - /tmp:size=134217728,mode=1777
+    ports:
+      - "${AEGIS_WEB_BIND:-127.0.0.1}:${AEGIS_WEB_PORT:-8501}:8501"
+    networks: [frontend]
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3).close()"]
+      interval: 15s
+      timeout: 4s
+      start_period: 20s
+      retries: 3
+    stop_grace_period: 15s
+    mem_limit: 768m
+    pids_limit: 128
+
+networks:
+  frontend:
+  backend:
+    internal: true

@@ -241,9 +241,11 @@ def test_malformed_scenario_response_is_error_not_crash(cohorts):
   def __enter__(self):return self
   def __exit__(self,*args):pass
   def read(self,*args):return json.dumps({"scenario_only":True,"cohorts":cohorts}).encode()
- with patch("urllib.request.urlopen",return_value=Response()):
+ with patch("urllib.request.build_opener") as build:
+  build.return_value.open.return_value=Response()
   app=AppTest.from_file(str(Path(__file__).resolve().with_name("dashboard.py")),default_timeout=20).run()
   next(button for button in app.button if button.label=="Recalculate scenario in Go").click().run()
+  build.return_value.open.assert_called_once()
  assert not app.exception
  assert any("Scenario unavailable" in error.value for error in app.error)
 
@@ -258,6 +260,192 @@ def test_nested_invalid_report_does_not_crash(tmp_path,monkeypatch,bad):
  app=AppTest.from_file(str(Path(__file__).resolve().with_name("dashboard.py")),default_timeout=20).run()
  assert not app.exception
  assert any("invalid schema" in warning.value for warning in app.warning)
+'''
+
+
+SOURCES["app/test_delivery_ephemeral.py"] = r'''import hashlib
+import json
+from pathlib import Path
+from unittest.mock import patch
+import urllib.error
+import pytest
+from app.api_config import configured_api_url, validate_api_url, post_json, _NoRedirects
+from scripts import fetch_model
+
+
+class Response:
+ def __init__(self, content, status=200):self.content,self.status=content,status
+ def __enter__(self):return self
+ def __exit__(self,*args):pass
+ def read(self,limit):return self.content[:limit]
+
+
+def test_operator_origin_and_default(monkeypatch):
+ monkeypatch.delenv("AEGIS_API_URL",raising=False)
+ assert configured_api_url()=="http://127.0.0.1:8080"
+ monkeypatch.setenv("AEGIS_API_URL","http://api:8080/")
+ assert configured_api_url()=="http://api:8080"
+ assert configured_api_url({"AEGIS_API_URL":"https://example.org:8443"})=="https://example.org:8443"
+ assert validate_api_url("http://[::1]:8080/")=="http://[::1]:8080"
+
+
+@pytest.mark.parametrize("origin", ["",None,"file:///etc/passwd","http://user:password@api:8080","http://api:8080/path","http://api?","http://api#","http://api:0","http://api:65536","http://api:","http://api\\other","http://api\n", "http://bad_host"])
+def test_invalid_origin_rejected_before_network(origin):
+ with patch("urllib.request.build_opener") as build:
+  with pytest.raises(ValueError):post_json(origin,"/v1/analyze",{})
+  build.assert_not_called()
+
+
+def test_known_routes_and_finite_payload_before_network():
+ with patch("urllib.request.build_opener") as build:
+  with pytest.raises(ValueError):post_json("http://api:8080","/other",{})
+  with pytest.raises(ValueError):post_json("http://api:8080","/v1/analyze",{"amount":float("nan")})
+  build.assert_not_called()
+
+
+def test_post_contract_and_no_redirect_handler():
+ with patch("urllib.request.build_opener") as build:
+  build.return_value.open.return_value=Response(b'{"score":0.2}')
+  assert post_json("http://api:8080/","/v1/analyze",{"amount":7})=={"score":.2}
+  handler=build.call_args.args[0]
+  assert isinstance(handler,_NoRedirects)
+  assert handler.redirect_request(None,None,302,"redirect",{},"http://elsewhere")==None
+  args,kwargs=build.return_value.open.call_args
+  req=args[0]
+  assert req.full_url=="http://api:8080/v1/analyze" and req.method=="POST"
+  assert json.loads(req.data)=={"amount":7} and kwargs["timeout"]==5
+
+
+@pytest.mark.parametrize("content", [b"[]",b"null",b"not json",b"x"*(128*1024+1)])
+def test_invalid_or_oversized_api_response(content):
+ with patch("urllib.request.build_opener") as build:
+  build.return_value.open.return_value=Response(content)
+  with pytest.raises(ValueError):post_json("http://api:8080","/v1/simulate",{})
+
+
+@pytest.mark.parametrize("error,expected", [(urllib.error.HTTPError("http://api",503,"internal secret",{},None),"HTTP 503"),(urllib.error.HTTPError("http://api",302,"redirect",{},None),"HTTP 302"),(urllib.error.URLError("internal secret"),"could not be reached"),(TimeoutError("internal secret"),"could not be reached")])
+def test_request_errors_redacted(error,expected):
+ with patch("urllib.request.build_opener") as build:
+  build.return_value.open.side_effect=error
+  with pytest.raises(ValueError,match=expected) as failure:post_json("http://api:8080","/v1/analyze",{})
+  assert "internal secret" not in str(failure.value)
+
+
+@pytest.fixture
+def bundle(tmp_path):
+ version="paysim-lr-"+"a"*16
+ commit="b"*40
+ contents={"model.joblib":b"frozen model fixture","calibrator.joblib":b"frozen calibration fixture"}
+ digest=lambda value:hashlib.sha256(value).hexdigest()
+ metadata={"model_version":version,"feature_names":["type","amount_log","hour"],"model_sha256":digest(contents["model.joblib"]),"calibrator_sha256":digest(contents["calibrator.joblib"]),"source_sha256":"c"*64}
+ contents["metadata.json"]=json.dumps(metadata).encode()
+ manifest={"schema_version":1,"model_version":version,"artifact_commit":commit,"base_url":f"https://raw.githubusercontent.com/S1m4nger/Aegis/{commit}/models/{version}","source_dataset_sha256":"c"*64,"files":{name:{"size":len(data),"sha256":digest(data)} for name,data in contents.items()}}
+ path=tmp_path/"manifest.json"
+ path.write_text(json.dumps(manifest))
+ return path,manifest,contents
+
+
+def test_mocked_fresh_download_checks_urls_and_bytes(bundle,tmp_path):
+ path,manifest,contents=bundle
+ output=tmp_path/"artifacts"
+ def download(req,timeout):
+  assert timeout==30
+  name=req.full_url.rsplit("/",1)[1]
+  assert req.full_url==manifest["base_url"]+"/"+name
+  return Response(contents[name])
+ with patch("urllib.request.build_opener") as build:
+  build.return_value.open.side_effect=download
+  assert fetch_model.fetch(path,output)==manifest["model_version"]
+  assert build.return_value.open.call_count==3
+  handler=build.call_args.args[0]
+  with pytest.raises(ValueError,match="redirects"):
+   handler.redirect_request(None,None,302,"redirect",{},"http://elsewhere")
+ assert {p.name:p.read_bytes() for p in output.iterdir()}==contents
+
+
+@pytest.mark.parametrize("with_readme", [False,True])
+def test_fresh_download_into_existing_placeholder_directory(bundle,tmp_path,with_readme):
+ path,manifest,contents=bundle
+ output=tmp_path/"artifacts"
+ output.mkdir()
+ note=b"Frozen artifact setup instructions; preserve this file.\n"
+ if with_readme:(output/"README.md").write_bytes(note)
+ with patch("urllib.request.build_opener") as build:
+  build.return_value.open.side_effect=lambda req,timeout:Response(contents[req.full_url.rsplit("/",1)[1]])
+  assert fetch_model.fetch(path,output)==manifest["model_version"]
+  assert build.return_value.open.call_count==3
+ assert {name:(output/name).read_bytes() for name in contents}==contents
+ assert set(p.name for p in output.iterdir())==set(contents)|({"README.md"} if with_readme else set())
+ if with_readme:assert (output/"README.md").read_bytes()==note
+
+
+@pytest.mark.parametrize("with_readme", [False,True])
+def test_check_only_existing_placeholder_directory_has_no_side_effects(bundle,tmp_path,with_readme):
+ path,_,_=bundle
+ output=tmp_path/"artifacts"
+ output.mkdir()
+ if with_readme:(output/"README.md").write_bytes(b"Keep setup notes.\n")
+ before={p.name:p.read_bytes() for p in output.iterdir()}
+ with patch("urllib.request.build_opener") as build:
+  with pytest.raises(ValueError):fetch_model.fetch(path,output,True)
+  build.assert_not_called()
+ assert output.is_dir()
+ assert {p.name:p.read_bytes() for p in output.iterdir()}==before
+
+
+def test_existing_valid_bundle_is_verified_without_network(bundle,tmp_path):
+ path,manifest,contents=bundle
+ output=tmp_path/"existing"
+ output.mkdir()
+ for name,data in contents.items():(output/name).write_bytes(data)
+ with patch("urllib.request.build_opener") as build:
+  assert fetch_model.fetch(path,output)==manifest["model_version"]
+  assert fetch_model.fetch(path,output,True)==manifest["model_version"]
+  build.assert_not_called()
+ assert {p.name:p.read_bytes() for p in output.iterdir()}==contents
+
+
+def test_existing_corruption_and_partial_bundle_never_overwritten(bundle,tmp_path):
+ path,manifest,contents=bundle
+ output=tmp_path/"existing"
+ output.mkdir()
+ for name,data in contents.items():(output/name).write_bytes(data)
+ (output/"model.joblib").write_bytes(b"corrupt")
+ snapshot={p.name:p.read_bytes() for p in output.iterdir()}
+ with patch("urllib.request.build_opener") as build:
+  with pytest.raises(ValueError):fetch_model.fetch(path,output)
+  assert {p.name:p.read_bytes() for p in output.iterdir()}==snapshot
+  (output/"calibrator.joblib").unlink()
+  with pytest.raises(ValueError,match="incomplete"):fetch_model.fetch(path,output)
+  build.assert_not_called()
+ assert (output/"model.joblib").read_bytes()==b"corrupt"
+
+
+def test_check_only_missing_bundle_has_no_side_effects(bundle,tmp_path):
+ path,_,_=bundle
+ output=tmp_path/"missing"
+ with patch("urllib.request.build_opener") as build:
+  with pytest.raises(ValueError,match="missing"):fetch_model.fetch(path,output,True)
+  build.assert_not_called()
+ assert not output.exists()
+
+
+@pytest.mark.parametrize("damage", ["bytes","provenance","origin"])
+def test_invalid_remote_bundle_never_installed(bundle,tmp_path,damage):
+ path,manifest,contents=bundle
+ if damage=="bytes":contents["model.joblib"]+=b"tampered"
+ if damage=="provenance":
+  meta=json.loads(contents["metadata.json"])
+  meta["source_sha256"]="d"*64
+  contents["metadata.json"]=json.dumps(meta).encode()
+  manifest["files"]["metadata.json"]={"size":len(contents["metadata.json"]),"sha256":hashlib.sha256(contents["metadata.json"]).hexdigest()}
+ if damage=="origin":manifest["base_url"]="https://example.org/models"
+ path.write_text(json.dumps(manifest))
+ output=tmp_path/"new"
+ with patch("urllib.request.build_opener") as build:
+  build.return_value.open.side_effect=lambda req,timeout:Response(contents[req.full_url.rsplit("/",1)[1]])
+  with pytest.raises(ValueError):fetch_model.fetch(path,output)
+ assert not output.exists()
 '''
 
 
@@ -277,7 +465,7 @@ def main():
         commands = [
             (["go", "test", "./..."], ROOT / "services/orchestrator"),
             (["go", "vet", "./..."], ROOT / "services/orchestrator"),
-            ([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "services/ml/test_runtime_ephemeral.py", "app/test_contract_ephemeral.py"], ROOT),
+            ([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "services/ml/test_runtime_ephemeral.py", "app/test_contract_ephemeral.py", "app/test_delivery_ephemeral.py"], ROOT),
         ]
         for command, cwd in commands:
             result = subprocess.run(command, cwd=cwd, env=env, text=True, capture_output=True)
