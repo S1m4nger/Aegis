@@ -5,3 +5,7 @@ Version: `paysim-lr-6035ac438abfb769`. This branch distributes only the exact mo
 Use the SHA-256 values in the bundle manifest. Consumers must pin the immutable commit SHA, not this movable branch name. Only trusted artifacts may be deserialized. No PaySim source dataset is included. PaySim source attribution: https://www.kaggle.com/datasets/ealaxi/paysim1 .
 
 Packaging was assisted by OpenAI Codex. Frozen weights, calibration and metadata are unchanged; no collaborators or Co-authored-by attribution are added.
+
+## Artifact licence and attribution
+
+The dataset-derived trained artifacts retain the project artifact card's CC BY-SA 4.0 notice: https://creativecommons.org/licenses/by-sa/4.0/ . See models/paysim-lr-6035ac438abfb769/README.md for PaySim attribution, transformation details and the no-endorsement notice. The root MIT licence applies to application source/packaging, not a relicensing of these artifacts.
