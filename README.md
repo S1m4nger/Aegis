@@ -2,7 +2,7 @@
 
 > A contest-window, solo participant research prototype to compare fraud rules, machine learning and conflict-aware policy on **synthetic PaySim transactions**.
 
-**Status: trained and evaluated locally. Submission has not been completed.**
+**Status: trained, evaluated and verified locally in Docker Compose. Submission has not been completed.**
 
 **Main finding:** on 196,601 held-out transactions, Simple Hybrid detected **502 of 2,148 frauds** and missed **1,646 (76.6%)**. Conflict-Aware improved Average Precision but did not improve F1 or simulated cost over Simple Hybrid. This is a measured trade-off, not a deployment-ready fraud prevention claim.
 
@@ -10,34 +10,50 @@
 An imagined analyst for a small payment service needs to balance missed suspicious transactions against burdensome reviews. Aegis AI prototypes an explainable policy, not a real payment processing service.
 
 ## Architecture
-Go (Uber Fx, Zap, chi) API & orchestration -> Python FastAPI ML scoring -> Go JSON AST rules + conflict fusion + cost-aware actions -> Streamlit visualization. See `docs/architecture.md`.
+The application runs as three Docker containers: a Streamlit dashboard, a Go API (Uber Fx, Zap, chi), and a Python FastAPI scorer. Go owns transaction validation, JSON AST rules, conflict fusion and cost-aware recommendations; Python serves the frozen trained model. Only the dashboard is published, at `127.0.0.1:8501`; API and ML communicate over internal Compose networks. See [architecture](docs/architecture.md).
 
-## Run the application
+## Build and run with Docker
 
-For standalone local execution with Python3.12 and Go1.24+:
-
-```bash
-python3.12 -m venv .venv
-.venv/bin/python -m pip install -r services/ml/requirements.lock.txt
-make artifacts
-(cd services/orchestrator && go mod download)
-```
-
-Then run `make ml-api`, `make go-api` and `make dashboard` in three terminals. Open **http://127.0.0.1:8501**. `AEGIS_API_URL` is a validated server-side setting, defaulting to `http://127.0.0.1:8080`; dashboard visitors cannot change the upstream destination. See [running instructions](docs/running.md).
-
-The live analyzer and scenario lab passed from an isolated publishable source copy after downloading the pinned model, without the raw dataset. That check reused installed dependencies; a fresh-machine dependency installation is not claimed. See [verification evidence](docs/deployment-verification.md).
-
-### Optional Docker Compose packaging
-
-Use Docker Engine with Docker Compose v2.20+ from the repository root:
+Requirements: Git, Docker Engine and Docker Compose v2.20+, with access to the
+Docker daemon. The first build needs internet access. No local Python/Go setup,
+Kaggle account, PaySim download or retraining is needed to run the application.
 
 ```bash
-docker compose up --build --wait
+git clone https://github.com/S1m4nger/Aegis.git
+cd Aegis
+docker compose up --build --wait --detach
 ```
 
-Open **http://127.0.0.1:8501**. Only the web interface is published by default. The web container calls `http://api:8080`; Go calls the internal scorer at `http://ml:8091`. No source-code bind mounts, development reloaders, database or broker are required. Stop the application with `docker compose down`.
+Open **http://127.0.0.1:8501**. Compose builds all three images, downloads and
+verifies the pinned model, then waits for ML, API and dashboard readiness. The
+analyzer shows the model score, fired rules, disagreement group and recommendation.
+The evidence tab shows frozen test results; Cost Lab re-costs saved actions under
+hypothetical assumptions without retraining or changing the experiment.
 
-Container builds and live Compose checks passed: analyzer, 15 scenario comparisons, dashboard, ML outage/recovery and shutdown. On this Omarchy host, outbound HTTPS through Docker bridge failed, so dependency downloads used **host networking during build only**; runtime networks and isolation follow the original Compose file. For the verified build command and evidence, see the [deployment guide](docs/deployment.md) and [verification record](docs/deployment-verification.md). Packaging does not change the prototype's research limitations.
+```bash
+docker compose ps                       # all three services should be healthy
+docker compose logs --tail=100          # inspect startup or readiness failures
+docker compose down                    # stop and remove the application containers
+```
+
+**Verified build on the development machine:** outbound HTTPS through Docker
+bridge failed, while host HTTPS worked. If dependency downloads time out for this
+reason, use the build-only host-network alternative:
+
+```bash
+docker buildx bake -f compose.yaml --set '*.network=host' --allow network.host --load
+docker compose up --no-build --wait --wait-timeout 120 --detach
+```
+
+Host networking applies only to the build. Running containers retain the original
+Compose networks, non-root users and read-only root filesystems. Only the dashboard
+port is published. This build and the live analyzer, 15 scenario comparisons,
+dashboard, ML outage/recovery and shutdown passed; see [verification evidence](docs/deployment-verification.md).
+The default bridge-network build did not pass on this host.
+
+For standalone Python/Go execution, training reproduction and configuration, see
+[running instructions](docs/running.md). Details of model delivery, networking and
+operating limits are in the [deployment guide](docs/deployment.md).
 
 ## Frozen model delivery
 
@@ -80,6 +96,8 @@ For the simple hybrid, a legitimate TRANSFER at step 555 with amount 2,375,178.3
 
 ## What we added and tested
 Beyond a plain fraud classifier, Aegis adds a safe Go JSON rule tree with explanations, explicit rule/ML disagreement groups, a cost-aware review policy under a fixed offline capacity, and the same Go decision functions in the live API and batch experiment. We tested whether these additions improved results over simple rules, ML and weighted fusion. The measured outcome does not establish an advantage for conflict handling over simple fusion.
+
+The Docker build installs pinned runtime dependencies and verifies the frozen model before startup. Container checks exercised actual Go-to-Python inference, input validation, all 15 strategy/scenario cost comparisons and the dashboard analyzer/Cost Lab. With ML stopped, Go returned 503 without an invented score; service recovery and shutdown were also checked. Container packaging does not change the model, frozen policy or reported results.
 
 ## Next steps
 Validate on a separate public data source to test generalization, and investigate richer features that are demonstrably available before a transaction decision. Any new experiment needs a new validation/test design; the current final test must not be reused to tune parameters.
