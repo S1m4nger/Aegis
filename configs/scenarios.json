@@ -1,0 +1,8 @@
+{
+  "currency": "arbitrary_units_not_real_bank_costs",
+  "scenarios": [
+    {"id":"review_low_cost","missed_fraud_cost":1000,"false_block_cost":50,"review_cost":2,"review_success_rate":0.9,"capacity_per_1000":10},
+    {"id":"review_expensive","missed_fraud_cost":1000,"false_block_cost":200,"review_cost":20,"review_success_rate":0.7,"capacity_per_1000":5},
+    {"id":"missed_fraud_expensive","missed_fraud_cost":5000,"false_block_cost":50,"review_cost":5,"review_success_rate":0.9,"capacity_per_1000":20}
+  ]
+}

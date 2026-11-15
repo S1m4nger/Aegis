@@ -1,0 +1,126 @@
+{
+  "calibration_method": "logistic regression on clipped base-model logits; calibration window only",
+  "calibrator_sha256": "4d411609cfc0b3176ce77ed8e3c1919e0cf45117abc91d61a4db92e1a870b370",
+  "created_at_utc": "2026-11-14T22:24:34.810728+00:00",
+  "dataset": {
+    "path": "data/raw/paysim.csv",
+    "rows": 6362620,
+    "sha256": "16910f90577b0d981bf8ff289714510bb89bc71bff7d3f220f024e287e4eea6b"
+  },
+  "excluded_columns": [
+    "isFlaggedFraud",
+    "isFraud",
+    "nameDest",
+    "nameOrig",
+    "newbalanceDest",
+    "newbalanceOrig",
+    "oldbalanceDest",
+    "oldbalanceOrg"
+  ],
+  "feature_names": [
+    "type",
+    "amount_log",
+    "hour"
+  ],
+  "model_sha256": "d8b0c144e09f4d905513a75afa6824a4c9c94a0e13ff7f4bca92b9f357c071cf",
+  "model_version": "paysim-lr-6035ac438abfb769",
+  "partitions": {
+    "calibration": {
+      "frauds": 796,
+      "legitimate": 239578,
+      "rows": 240374,
+      "types": {
+        "CASH_IN": 51369,
+        "CASH_OUT": 82267,
+        "DEBIT": 1679,
+        "PAYMENT": 85329,
+        "TRANSFER": 19730
+      }
+    },
+    "selection_audit_only": {
+      "frauds": 792,
+      "legitimate": 137823,
+      "rows": 138615,
+      "types": {
+        "CASH_IN": 31441,
+        "CASH_OUT": 43662,
+        "DEBIT": 1088,
+        "PAYMENT": 49431,
+        "TRANSFER": 12993
+      }
+    },
+    "test_audit_only_unopened": {
+      "frauds": 2148,
+      "legitimate": 194453,
+      "rows": 196601,
+      "types": {
+        "CASH_IN": 45107,
+        "CASH_OUT": 63475,
+        "DEBIT": 1549,
+        "PAYMENT": 67724,
+        "TRANSFER": 18746
+      }
+    },
+    "train": {
+      "frauds": 4477,
+      "legitimate": 5782553,
+      "rows": 5787030,
+      "types": {
+        "CASH_IN": 1271367,
+        "CASH_OUT": 2048096,
+        "DEBIT": 37116,
+        "PAYMENT": 1949011,
+        "TRANSFER": 481440
+      }
+    }
+  },
+  "rule_candidates": {
+    "amount_thresholds": {
+      "CASH_OUT": {
+        "0.5": 151584.24,
+        "0.75": 254556.3,
+        "0.9": 374449.146,
+        "0.95": 461461.7350000001,
+        "0.99": 1011194.7236000003
+      },
+      "TRANSFER": {
+        "0.5": 492559.88,
+        "0.75": 1020755.185,
+        "0.9": 1951763.9899999995,
+        "0.95": 3105969.885,
+        "0.99": 10000000.0
+      }
+    },
+    "quantiles": [
+      0.5,
+      0.75,
+      0.9,
+      0.95,
+      0.99
+    ],
+    "selection_required": true,
+    "source": "train_fit_sample_only; all frauds plus deterministic capped negative sample"
+  },
+  "selection_threshold": null,
+  "source_sha256": "16910f90577b0d981bf8ff289714510bb89bc71bff7d3f220f024e287e4eea6b",
+  "status": "trained_and_calibrated; strategy selection and final evaluation not run",
+  "test_rows_loaded_into_training_memory": false,
+  "test_scored": false,
+  "training_sample": {
+    "frauds": 4477,
+    "legitimate_sampled": 200000,
+    "legitimate_sampling_fraction": 0.03458679929090144,
+    "legitimate_source": 5782553,
+    "negative_cap": 200000,
+    "rows": 204477,
+    "seed": 42
+  },
+  "versions": {
+    "joblib": "1.6.0",
+    "numpy": "2.5.4",
+    "pandas": "2.3.3",
+    "python": "3.12.15",
+    "scikit-learn": "1.9.1",
+    "threadpoolctl": "3.8.0"
+  }
+}

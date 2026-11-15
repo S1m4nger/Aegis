@@ -1,0 +1,88 @@
+{
+  "calibrator_sha256": "4d411609cfc0b3176ce77ed8e3c1919e0cf45117abc91d61a4db92e1a870b370",
+  "frozen_hashes": {
+    "calibrator": "4d411609cfc0b3176ce77ed8e3c1919e0cf45117abc91d61a4db92e1a870b370",
+    "evaluator_go": "d87f1d13ade863ecee65a7da71af908351560ab8a5b9b8c52b743478658fc618",
+    "evaluator_python": "65492c97e2afcbd4f9399d856552be663333c5f4ed71f6e8ebebc16d12602909",
+    "features": "8188d112db72080c52ae75b4d0528acb160854a2647e839626b57a5a2d6943db",
+    "inference": "ba7b75130356135dd6bc804e690ad8f700826947a64902eecf320b221e6e9aaa",
+    "metadata": "7f991f6e25a2c42586dbb9ea13c4b3303d647145abc742842a16287f3de586dd",
+    "model": "d8b0c144e09f4d905513a75afa6824a4c9c94a0e13ff7f4bca92b9f357c071cf",
+    "policy_config": "fe040db2f064e71cf8ab05c67beb1b8c9aa6a416cd77da04c62d6001d7c9c910",
+    "policy_go": "521e56e9bdeec186b8e50211c684b4f24ad6406f8b7056e49c77b8fac7771be5",
+    "rules_config": "1afc4608a1b2589a2b9eb4c3994ebbf28932b317c4763120f9af5ef6c858752e",
+    "rules_go": "6b3574b5d0262e944b3657d28a9cff25740b094458ec3115b7a81c2027331748",
+    "scenarios_config": "e06bd100d7ed0d53c6454f702bc815d03cdd3f9e4b31c7881566183cdad3d5fe",
+    "selection_bundle": "4e28ff4254a52c13e16bc5ade508a3f7a4f10d05c4bf642831bd123c26c44d2a",
+    "selection_go": "c51d40e3a55f912f4fa2beec0f04c4aa4ad1b23709ac5c6b2d362f2fdd6e7a28",
+    "source_data": "16910f90577b0d981bf8ff289714510bb89bc71bff7d3f220f024e287e4eea6b"
+  },
+  "model_sha256": "d8b0c144e09f4d905513a75afa6824a4c9c94a0e13ff7f4bca92b9f357c071cf",
+  "model_version": "paysim-lr-6035ac438abfb769",
+  "partition_counts": {
+    "calibration": {
+      "frauds": 796,
+      "legitimate": 239578,
+      "rows": 240374,
+      "types": {
+        "CASH_IN": 51369,
+        "CASH_OUT": 82267,
+        "DEBIT": 1679,
+        "PAYMENT": 85329,
+        "TRANSFER": 19730
+      }
+    },
+    "selection": {
+      "frauds": 792,
+      "legitimate": 137823,
+      "rows": 138615,
+      "types": {
+        "CASH_IN": 31441,
+        "CASH_OUT": 43662,
+        "DEBIT": 1088,
+        "PAYMENT": 49431,
+        "TRANSFER": 12993
+      }
+    },
+    "test": {
+      "frauds": 2148,
+      "legitimate": 194453,
+      "rows": 196601,
+      "types": {
+        "CASH_IN": 45107,
+        "CASH_OUT": 63475,
+        "DEBIT": 1549,
+        "PAYMENT": 67724,
+        "TRANSFER": 18746
+      }
+    },
+    "train": {
+      "frauds": 4477,
+      "legitimate": 5782553,
+      "rows": 5787030,
+      "types": {
+        "CASH_IN": 1271367,
+        "CASH_OUT": 2048096,
+        "DEBIT": 37116,
+        "PAYMENT": 1949011,
+        "TRANSFER": 481440
+      }
+    }
+  },
+  "primary_policy": {
+    "classification_threshold": 0.20217793616420238,
+    "disagreement_weight": 1,
+    "flag_threshold": 0.1,
+    "ml_conflict_cutoff": 0.13290127020309683,
+    "ml_weight": 0.9,
+    "note": "Frozen on steps 471-550; cost scenario review_low_cost; synthetic PaySim only.",
+    "review_threshold": 3.4669105480380014e-09,
+    "rule_conflict_cutoff": 0.4,
+    "strategy": "CONFLICT_AWARE_HYBRID",
+    "version": "selection-v1"
+  },
+  "schema_version": "1.0",
+  "selection_created_at_utc": "2026-11-15T08:38:17.864457+00:00",
+  "selection_predictions_sha256": "a6b7fbdd272571262ea299e498aae271a6fd5c339ebc205ba6b88b260529fa7a",
+  "source_sha256": "16910f90577b0d981bf8ff289714510bb89bc71bff7d3f220f024e287e4eea6b"
+}

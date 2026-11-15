@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-11-15T08:54:21.763600+00:00",
+  "status": "passed",
+  "transaction": {
+    "step": 550,
+    "type": "TRANSFER",
+    "amount": 125000
+  },
+  "analysis": {
+    "fired_rules": [],
+    "strategy": "CONFLICT_AWARE_HYBRID",
+    "fusion_score_semantics": "heuristic_risk_score",
+    "schema_version": "1.0",
+    "model_version": "paysim-lr-6035ac438abfb769",
+    "ml_score": 0.009953487515468108,
+    "rule_score": 0,
+    "fusion_score": 0.008958138763921297,
+    "conflict_type": "BOTH_LOW",
+    "recommended_action": "REVIEW",
+    "reasons": [
+      "no_rule_triggered"
+    ],
+    "ml_score_semantics": "calibrated_probability_estimate_with_temporal_drift_warning",
+    "disclaimer": "This project is a prototype and is not financial advice.",
+    "policy_version": "selection-v1"
+  },
+  "batch_api_parity": {
+    "status": "passed",
+    "synthetic_samples": 9,
+    "strategy": "CONFLICT_AWARE_HYBRID",
+    "scenario": "review_low_cost",
+    "comparison": "score, rules, conflict, unbounded action"
+  },
+  "dashboard_and_scenario_checks": {
+    "status": "passed",
+    "scenario_strategy_comparisons": 15,
+    "live_ui_analyzer": true,
+    "live_ui_cost_lab": true,
+    "final_report_unchanged": true
+  },
+  "missing_scorer_status": 503,
+  "missing_amount_status": 400,
+  "go_graceful_shutdown_exit": 0
+}

@@ -1,0 +1,2 @@
+# Python csv.writer emits standard CSV CRLF; retain report bytes.
+reports/*.csv whitespace=cr-at-eol

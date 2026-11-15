@@ -1,0 +1,364 @@
+{
+  "schema_version": "1.0",
+  "rule_document": {
+    "version": "1.0",
+    "rules": [
+      {
+        "id": "large_transfer_example",
+        "enabled": true,
+        "priority": 10,
+        "risk_weight": 0.55,
+        "when": {
+          "op": "and",
+          "children": [
+            {
+              "op": "eq",
+              "field": "type",
+              "value": "TRANSFER"
+            },
+            {
+              "op": "gte",
+              "field": "amount",
+              "value": 10000000
+            }
+          ]
+        },
+        "explanation": "High amount for transfer; threshold is illustrative and must be tuned on selection data"
+      },
+      {
+        "id": "large_cashout_example",
+        "enabled": true,
+        "priority": 20,
+        "risk_weight": 0.4,
+        "when": {
+          "op": "and",
+          "children": [
+            {
+              "op": "eq",
+              "field": "type",
+              "value": "CASH_OUT"
+            },
+            {
+              "op": "gte",
+              "field": "amount",
+              "value": 1011194.7236000003
+            }
+          ]
+        },
+        "explanation": "High amount for cash-out; threshold is illustrative"
+      }
+    ]
+  },
+  "selected_rule_thresholds": {
+    "CASH_OUT": 1011194.7236000003,
+    "TRANSFER": 10000000
+  },
+  "classification_policies": {
+    "ALWAYS_LEGITIMATE": {
+      "version": "selection-v1",
+      "strategy": "ALWAYS_LEGITIMATE",
+      "ml_weight": 0.7,
+      "disagreement_weight": 0.5,
+      "ml_conflict_cutoff": 0.13290127020309683,
+      "rule_conflict_cutoff": 0.4,
+      "review_threshold": 0.35,
+      "flag_threshold": 0.8,
+      "classification_threshold": 1,
+      "note": ""
+    },
+    "CONFLICT_AWARE_HYBRID": {
+      "version": "selection-v1",
+      "strategy": "CONFLICT_AWARE_HYBRID",
+      "ml_weight": 0.9,
+      "disagreement_weight": 1,
+      "ml_conflict_cutoff": 0.13290127020309683,
+      "rule_conflict_cutoff": 0.4,
+      "review_threshold": 0.35,
+      "flag_threshold": 0.8,
+      "classification_threshold": 0.20217793616420238,
+      "note": ""
+    },
+    "ML_ONLY": {
+      "version": "selection-v1",
+      "strategy": "ML_ONLY",
+      "ml_weight": 0.7,
+      "disagreement_weight": 0.5,
+      "ml_conflict_cutoff": 0.13290127020309683,
+      "rule_conflict_cutoff": 0.4,
+      "review_threshold": 0.35,
+      "flag_threshold": 0.8,
+      "classification_threshold": 0.13290127020309683,
+      "note": ""
+    },
+    "RULES_ONLY": {
+      "version": "selection-v1",
+      "strategy": "RULES_ONLY",
+      "ml_weight": 0.7,
+      "disagreement_weight": 0.5,
+      "ml_conflict_cutoff": 0.13290127020309683,
+      "rule_conflict_cutoff": 0.4,
+      "review_threshold": 0.35,
+      "flag_threshold": 0.8,
+      "classification_threshold": 0.4,
+      "note": ""
+    },
+    "SIMPLE_HYBRID": {
+      "version": "selection-v1",
+      "strategy": "SIMPLE_HYBRID",
+      "ml_weight": 0.5,
+      "disagreement_weight": 0.5,
+      "ml_conflict_cutoff": 0.13290127020309683,
+      "rule_conflict_cutoff": 0.4,
+      "review_threshold": 0.35,
+      "flag_threshold": 0.8,
+      "classification_threshold": 0.10108896808210119,
+      "note": ""
+    }
+  },
+  "cost_policies": {
+    "ALWAYS_LEGITIMATE": {
+      "missed_fraud_expensive": {
+        "version": "selection-v1",
+        "strategy": "ALWAYS_LEGITIMATE",
+        "ml_weight": 0.7,
+        "disagreement_weight": 0.5,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.35,
+        "flag_threshold": 0.8,
+        "classification_threshold": 1,
+        "note": ""
+      },
+      "review_expensive": {
+        "version": "selection-v1",
+        "strategy": "ALWAYS_LEGITIMATE",
+        "ml_weight": 0.7,
+        "disagreement_weight": 0.5,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.35,
+        "flag_threshold": 0.8,
+        "classification_threshold": 1,
+        "note": ""
+      },
+      "review_low_cost": {
+        "version": "selection-v1",
+        "strategy": "ALWAYS_LEGITIMATE",
+        "ml_weight": 0.7,
+        "disagreement_weight": 0.5,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.35,
+        "flag_threshold": 0.8,
+        "classification_threshold": 1,
+        "note": ""
+      }
+    },
+    "CONFLICT_AWARE_HYBRID": {
+      "missed_fraud_expensive": {
+        "version": "selection-v1",
+        "strategy": "CONFLICT_AWARE_HYBRID",
+        "ml_weight": 0.9,
+        "disagreement_weight": 1,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.002,
+        "flag_threshold": 0.007782301016959298,
+        "classification_threshold": 0.20217793616420238,
+        "note": ""
+      },
+      "review_expensive": {
+        "version": "selection-v1",
+        "strategy": "CONFLICT_AWARE_HYBRID",
+        "ml_weight": 0.9,
+        "disagreement_weight": 1,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.09049462910926553,
+        "flag_threshold": 0.2,
+        "classification_threshold": 0.20217793616420238,
+        "note": ""
+      },
+      "review_low_cost": {
+        "version": "selection-v1",
+        "strategy": "CONFLICT_AWARE_HYBRID",
+        "ml_weight": 0.9,
+        "disagreement_weight": 1,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 3.4669105480380014e-9,
+        "flag_threshold": 0.1,
+        "classification_threshold": 0.20217793616420238,
+        "note": ""
+      }
+    },
+    "ML_ONLY": {
+      "missed_fraud_expensive": {
+        "version": "selection-v1",
+        "strategy": "ML_ONLY",
+        "ml_weight": 0.7,
+        "disagreement_weight": 0.5,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.0005,
+        "flag_threshold": 0.005,
+        "classification_threshold": 0.13290127020309683,
+        "note": ""
+      },
+      "review_expensive": {
+        "version": "selection-v1",
+        "strategy": "ML_ONLY",
+        "ml_weight": 0.7,
+        "disagreement_weight": 0.5,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.1,
+        "flag_threshold": 0.2,
+        "classification_threshold": 0.13290127020309683,
+        "note": ""
+      },
+      "review_low_cost": {
+        "version": "selection-v1",
+        "strategy": "ML_ONLY",
+        "ml_weight": 0.7,
+        "disagreement_weight": 0.5,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.02,
+        "flag_threshold": 0.09619667560302164,
+        "classification_threshold": 0.13290127020309683,
+        "note": ""
+      }
+    },
+    "RULES_ONLY": {
+      "missed_fraud_expensive": {
+        "version": "selection-v1",
+        "strategy": "RULES_ONLY",
+        "ml_weight": 0.7,
+        "disagreement_weight": 0.5,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.0005,
+        "flag_threshold": 0.001,
+        "classification_threshold": 0.4,
+        "note": ""
+      },
+      "review_expensive": {
+        "version": "selection-v1",
+        "strategy": "RULES_ONLY",
+        "ml_weight": 0.7,
+        "disagreement_weight": 0.5,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.0005,
+        "flag_threshold": 0.001,
+        "classification_threshold": 0.4,
+        "note": ""
+      },
+      "review_low_cost": {
+        "version": "selection-v1",
+        "strategy": "RULES_ONLY",
+        "ml_weight": 0.7,
+        "disagreement_weight": 0.5,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.0005,
+        "flag_threshold": 0.001,
+        "classification_threshold": 0.4,
+        "note": ""
+      }
+    },
+    "SIMPLE_HYBRID": {
+      "missed_fraud_expensive": {
+        "version": "selection-v1",
+        "strategy": "SIMPLE_HYBRID",
+        "ml_weight": 0.5,
+        "disagreement_weight": 0.5,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.001,
+        "flag_threshold": 0.004323500564977387,
+        "classification_threshold": 0.10108896808210119,
+        "note": ""
+      },
+      "review_expensive": {
+        "version": "selection-v1",
+        "strategy": "SIMPLE_HYBRID",
+        "ml_weight": 0.5,
+        "disagreement_weight": 0.5,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.050274793949591966,
+        "flag_threshold": 0.1,
+        "classification_threshold": 0.10108896808210119,
+        "note": ""
+      },
+      "review_low_cost": {
+        "version": "selection-v1",
+        "strategy": "SIMPLE_HYBRID",
+        "ml_weight": 0.5,
+        "disagreement_weight": 0.5,
+        "ml_conflict_cutoff": 0.13290127020309683,
+        "rule_conflict_cutoff": 0.4,
+        "review_threshold": 0.01,
+        "flag_threshold": 0.050274793949591966,
+        "classification_threshold": 0.10108896808210119,
+        "note": ""
+      }
+    }
+  },
+  "selection_metrics": {
+    "ALWAYS_LEGITIMATE": {
+      "f1": 0,
+      "precision": 0,
+      "recall": 0,
+      "classification_threshold": 1,
+      "false_positives": 0
+    },
+    "CONFLICT_AWARE_HYBRID": {
+      "f1": 0.34582132564841495,
+      "precision": 0.7228915662650602,
+      "recall": 0.22727272727272727,
+      "classification_threshold": 0.20217793616420238,
+      "false_positives": 69
+    },
+    "ML_ONLY": {
+      "f1": 0.1296978629329403,
+      "precision": 0.15575221238938053,
+      "recall": 0.1111111111111111,
+      "classification_threshold": 0.13290127020309683,
+      "false_positives": 477
+    },
+    "RULES_ONLY": {
+      "f1": 0.3009605122732124,
+      "precision": 0.9724137931034482,
+      "recall": 0.17803030303030304,
+      "classification_threshold": 0.4,
+      "false_positives": 4
+    },
+    "SIMPLE_HYBRID": {
+      "f1": 0.345489443378119,
+      "precision": 0.72,
+      "recall": 0.22727272727272727,
+      "classification_threshold": 0.10108896808210119,
+      "false_positives": 70
+    }
+  },
+  "primary_policy": {
+    "version": "selection-v1",
+    "strategy": "CONFLICT_AWARE_HYBRID",
+    "ml_weight": 0.9,
+    "disagreement_weight": 1,
+    "ml_conflict_cutoff": 0.13290127020309683,
+    "rule_conflict_cutoff": 0.4,
+    "review_threshold": 3.4669105480380014e-9,
+    "flag_threshold": 0.1,
+    "classification_threshold": 0.20217793616420238,
+    "note": "Frozen on steps 471-550; cost scenario review_low_cost; synthetic PaySim only."
+  },
+  "scenario_ids": [
+    "review_low_cost",
+    "review_expensive",
+    "missed_fraud_expensive"
+  ]
+}

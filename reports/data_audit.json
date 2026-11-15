@@ -1,0 +1,100 @@
+{
+  "excluded_columns": [
+    "isFraud is target-only",
+    "isFlaggedFraud",
+    "oldbalanceOrg",
+    "newbalanceOrig",
+    "oldbalanceDest",
+    "newbalanceDest",
+    "nameOrig",
+    "nameDest"
+  ],
+  "feature_columns": [
+    "type",
+    "amount_log",
+    "hour"
+  ],
+  "final_test_predictions_computed": false,
+  "held_out_test_retained_as_partition": false,
+  "model_input_columns": [
+    "step",
+    "type",
+    "amount",
+    "isFraud"
+  ],
+  "partitions": {
+    "calibration": {
+      "frauds": 796,
+      "legitimate": 239578,
+      "rows": 240374,
+      "types": {
+        "CASH_IN": 51369,
+        "CASH_OUT": 82267,
+        "DEBIT": 1679,
+        "PAYMENT": 85329,
+        "TRANSFER": 19730
+      }
+    },
+    "selection": {
+      "frauds": 792,
+      "legitimate": 137823,
+      "rows": 138615,
+      "types": {
+        "CASH_IN": 31441,
+        "CASH_OUT": 43662,
+        "DEBIT": 1088,
+        "PAYMENT": 49431,
+        "TRANSFER": 12993
+      }
+    },
+    "test": {
+      "frauds": 2148,
+      "legitimate": 194453,
+      "rows": 196601,
+      "types": {
+        "CASH_IN": 45107,
+        "CASH_OUT": 63475,
+        "DEBIT": 1549,
+        "PAYMENT": 67724,
+        "TRANSFER": 18746
+      }
+    },
+    "train": {
+      "frauds": 4477,
+      "legitimate": 5782553,
+      "rows": 5787030,
+      "types": {
+        "CASH_IN": 1271367,
+        "CASH_OUT": 2048096,
+        "DEBIT": 37116,
+        "PAYMENT": 1949011,
+        "TRANSFER": 481440
+      }
+    }
+  },
+  "schema": [
+    "step",
+    "type",
+    "amount",
+    "nameOrig",
+    "oldbalanceOrg",
+    "newbalanceOrig",
+    "nameDest",
+    "oldbalanceDest",
+    "newbalanceDest",
+    "isFraud",
+    "isFlaggedFraud"
+  ],
+  "source_rows": 6362620,
+  "step_max": 743,
+  "step_min": 1,
+  "training_sample": {
+    "frauds": 4477,
+    "legitimate_sampled": 200000,
+    "legitimate_sampling_fraction": 0.03458679929090144,
+    "legitimate_source": 5782553,
+    "negative_cap": 200000,
+    "rows": 204477,
+    "seed": 42
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "version": "selection-v1",
+  "strategy": "CONFLICT_AWARE_HYBRID",
+  "ml_weight": 0.9,
+  "disagreement_weight": 1,
+  "ml_conflict_cutoff": 0.13290127020309683,
+  "rule_conflict_cutoff": 0.4,
+  "review_threshold": 3.4669105480380014e-9,
+  "flag_threshold": 0.1,
+  "classification_threshold": 0.20217793616420238,
+  "note": "Frozen on steps 471-550; cost scenario review_low_cost; synthetic PaySim only."
+}

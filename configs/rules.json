@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "rules": [
+    {
+      "id": "large_transfer_example",
+      "enabled": true,
+      "priority": 10,
+      "risk_weight": 0.55,
+      "when": {
+        "op": "and",
+        "children": [
+          {
+            "op": "eq",
+            "field": "type",
+            "value": "TRANSFER"
+          },
+          {
+            "op": "gte",
+            "field": "amount",
+            "value": 10000000
+          }
+        ]
+      },
+      "explanation": "High amount for transfer; threshold is illustrative and must be tuned on selection data"
+    },
+    {
+      "id": "large_cashout_example",
+      "enabled": true,
+      "priority": 20,
+      "risk_weight": 0.4,
+      "when": {
+        "op": "and",
+        "children": [
+          {
+            "op": "eq",
+            "field": "type",
+            "value": "CASH_OUT"
+          },
+          {
+            "op": "gte",
+            "field": "amount",
+            "value": 1011194.7236000003
+          }
+        ]
+      },
+      "explanation": "High amount for cash-out; threshold is illustrative"
+    }
+  ]
+}

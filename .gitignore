@@ -1,0 +1,53 @@
+# Sensitive/large source and generated data
+/data/raw/
+/data/processed/
+/data/cache/
+*.zip
+*.csv
+!docs/**/*.csv
+!reports/*.csv
+/services/ml/artifacts/
+/reports/generated/
+/reports/*_predictions.jsonl
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+# Graphify local index
+/graphify-out/
+# Go
+/bin/
+/coverage.out
+# Environment/secrets
+.env
+.env.*
+!.env.example
+# Ephemeral testing files (even when they exist temporarily)
+*_test.go
+test_*.py
+*_test.py
+/.scratch-tests/
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Preserved original starter archive contents
+/AEGIS_AI_CODEX_FULL_KIT/
+
+# Personal AI instructions and local project-management material
+/AGENTS.md
+/CODEX_*.md
+/tasks/
+/.graphifyignore
+/.local/
+/docs/bootstrap.md
+/docs/checkpoint.json
+/docs/change-inventory.md
+/docs/implementation-plan.md
+/docs/graphify-worklog.md
+/docs/verification-log.md
+/docs/status.md
+/docs/submission.md
+/docs/demo-and-writeup.md

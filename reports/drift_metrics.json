@@ -1,0 +1,567 @@
+{
+  "by_step": {
+    "ALWAYS_LEGITIMATE": {
+      "551-600": {
+        "fn": 548,
+        "fp": 0,
+        "fraud_prevalence": 0.005890699574321709,
+        "frauds": 548,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 93028,
+        "tn": 92480,
+        "tp": 0
+      },
+      "601-650": {
+        "fn": 578,
+        "fp": 0,
+        "fraud_prevalence": 0.02541553073608302,
+        "frauds": 578,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 22742,
+        "tn": 22164,
+        "tp": 0
+      },
+      "651-700": {
+        "fn": 532,
+        "fp": 0,
+        "fraud_prevalence": 0.007664601642414638,
+        "frauds": 532,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 69410,
+        "tn": 68878,
+        "tp": 0
+      },
+      "701-743": {
+        "fn": 490,
+        "fp": 0,
+        "fraud_prevalence": 0.04290342351808073,
+        "frauds": 490,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 11421,
+        "tn": 10931,
+        "tp": 0
+      }
+    },
+    "CONFLICT_AWARE_HYBRID": {
+      "551-600": {
+        "fn": 428,
+        "fp": 35,
+        "fraud_prevalence": 0.005890699574321709,
+        "frauds": 548,
+        "precision": 0.7741935483870968,
+        "recall": 0.21897810218978103,
+        "rows": 93028,
+        "tn": 92445,
+        "tp": 120
+      },
+      "601-650": {
+        "fn": 443,
+        "fp": 39,
+        "fraud_prevalence": 0.02541553073608302,
+        "frauds": 578,
+        "precision": 0.7758620689655172,
+        "recall": 0.23356401384083045,
+        "rows": 22742,
+        "tn": 22125,
+        "tp": 135
+      },
+      "651-700": {
+        "fn": 399,
+        "fp": 60,
+        "fraud_prevalence": 0.007664601642414638,
+        "frauds": 532,
+        "precision": 0.689119170984456,
+        "recall": 0.25,
+        "rows": 69410,
+        "tn": 68818,
+        "tp": 133
+      },
+      "701-743": {
+        "fn": 380,
+        "fp": 0,
+        "fraud_prevalence": 0.04290342351808073,
+        "frauds": 490,
+        "precision": 1.0,
+        "recall": 0.22448979591836735,
+        "rows": 11421,
+        "tn": 10931,
+        "tp": 110
+      }
+    },
+    "ML_ONLY": {
+      "551-600": {
+        "fn": 479,
+        "fp": 115,
+        "fraud_prevalence": 0.005890699574321709,
+        "frauds": 548,
+        "precision": 0.375,
+        "recall": 0.1259124087591241,
+        "rows": 93028,
+        "tn": 92365,
+        "tp": 69
+      },
+      "601-650": {
+        "fn": 520,
+        "fp": 97,
+        "fraud_prevalence": 0.02541553073608302,
+        "frauds": 578,
+        "precision": 0.3741935483870968,
+        "recall": 0.10034602076124567,
+        "rows": 22742,
+        "tn": 22067,
+        "tp": 58
+      },
+      "651-700": {
+        "fn": 462,
+        "fp": 319,
+        "fraud_prevalence": 0.007664601642414638,
+        "frauds": 532,
+        "precision": 0.17994858611825193,
+        "recall": 0.13157894736842105,
+        "rows": 69410,
+        "tn": 68559,
+        "tp": 70
+      },
+      "701-743": {
+        "fn": 439,
+        "fp": 19,
+        "fraud_prevalence": 0.04290342351808073,
+        "frauds": 490,
+        "precision": 0.7285714285714285,
+        "recall": 0.10408163265306122,
+        "rows": 11421,
+        "tn": 10912,
+        "tp": 51
+      }
+    },
+    "RULES_ONLY": {
+      "551-600": {
+        "fn": 455,
+        "fp": 15,
+        "fraud_prevalence": 0.005890699574321709,
+        "frauds": 548,
+        "precision": 0.8611111111111112,
+        "recall": 0.16970802919708028,
+        "rows": 93028,
+        "tn": 92465,
+        "tp": 93
+      },
+      "601-650": {
+        "fn": 476,
+        "fp": 5,
+        "fraud_prevalence": 0.02541553073608302,
+        "frauds": 578,
+        "precision": 0.9532710280373832,
+        "recall": 0.17647058823529413,
+        "rows": 22742,
+        "tn": 22159,
+        "tp": 102
+      },
+      "651-700": {
+        "fn": 430,
+        "fp": 19,
+        "fraud_prevalence": 0.007664601642414638,
+        "frauds": 532,
+        "precision": 0.8429752066115702,
+        "recall": 0.19172932330827067,
+        "rows": 69410,
+        "tn": 68859,
+        "tp": 102
+      },
+      "701-743": {
+        "fn": 393,
+        "fp": 0,
+        "fraud_prevalence": 0.04290342351808073,
+        "frauds": 490,
+        "precision": 1.0,
+        "recall": 0.19795918367346937,
+        "rows": 11421,
+        "tn": 10931,
+        "tp": 97
+      }
+    },
+    "SIMPLE_HYBRID": {
+      "551-600": {
+        "fn": 428,
+        "fp": 35,
+        "fraud_prevalence": 0.005890699574321709,
+        "frauds": 548,
+        "precision": 0.7741935483870968,
+        "recall": 0.21897810218978103,
+        "rows": 93028,
+        "tn": 92445,
+        "tp": 120
+      },
+      "601-650": {
+        "fn": 443,
+        "fp": 39,
+        "fraud_prevalence": 0.02541553073608302,
+        "frauds": 578,
+        "precision": 0.7758620689655172,
+        "recall": 0.23356401384083045,
+        "rows": 22742,
+        "tn": 22125,
+        "tp": 135
+      },
+      "651-700": {
+        "fn": 399,
+        "fp": 60,
+        "fraud_prevalence": 0.007664601642414638,
+        "frauds": 532,
+        "precision": 0.689119170984456,
+        "recall": 0.25,
+        "rows": 69410,
+        "tn": 68818,
+        "tp": 133
+      },
+      "701-743": {
+        "fn": 376,
+        "fp": 0,
+        "fraud_prevalence": 0.04290342351808073,
+        "frauds": 490,
+        "precision": 1.0,
+        "recall": 0.23265306122448978,
+        "rows": 11421,
+        "tn": 10931,
+        "tp": 114
+      }
+    }
+  },
+  "by_type": {
+    "ALWAYS_LEGITIMATE": {
+      "CASH_IN": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 45107,
+        "tn": 45107,
+        "tp": 0
+      },
+      "CASH_OUT": {
+        "fn": 1074,
+        "fp": 0,
+        "fraud_prevalence": 0.01692004726270185,
+        "frauds": 1074,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 63475,
+        "tn": 62401,
+        "tp": 0
+      },
+      "DEBIT": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 1549,
+        "tn": 1549,
+        "tp": 0
+      },
+      "PAYMENT": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 67724,
+        "tn": 67724,
+        "tp": 0
+      },
+      "TRANSFER": {
+        "fn": 1074,
+        "fp": 0,
+        "fraud_prevalence": 0.05729222234076603,
+        "frauds": 1074,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 18746,
+        "tn": 17672,
+        "tp": 0
+      }
+    },
+    "CONFLICT_AWARE_HYBRID": {
+      "CASH_IN": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 45107,
+        "tn": 45107,
+        "tp": 0
+      },
+      "CASH_OUT": {
+        "fn": 734,
+        "fp": 1,
+        "fraud_prevalence": 0.01692004726270185,
+        "frauds": 1074,
+        "precision": 0.9970674486803519,
+        "recall": 0.3165735567970205,
+        "rows": 63475,
+        "tn": 62400,
+        "tp": 340
+      },
+      "DEBIT": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 1549,
+        "tn": 1549,
+        "tp": 0
+      },
+      "PAYMENT": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 67724,
+        "tn": 67724,
+        "tp": 0
+      },
+      "TRANSFER": {
+        "fn": 916,
+        "fp": 133,
+        "fraud_prevalence": 0.05729222234076603,
+        "frauds": 1074,
+        "precision": 0.5429553264604811,
+        "recall": 0.14711359404096835,
+        "rows": 18746,
+        "tn": 17539,
+        "tp": 158
+      }
+    },
+    "ML_ONLY": {
+      "CASH_IN": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 45107,
+        "tn": 45107,
+        "tp": 0
+      },
+      "CASH_OUT": {
+        "fn": 1074,
+        "fp": 0,
+        "fraud_prevalence": 0.01692004726270185,
+        "frauds": 1074,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 63475,
+        "tn": 62401,
+        "tp": 0
+      },
+      "DEBIT": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 1549,
+        "tn": 1549,
+        "tp": 0
+      },
+      "PAYMENT": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 67724,
+        "tn": 67724,
+        "tp": 0
+      },
+      "TRANSFER": {
+        "fn": 826,
+        "fp": 550,
+        "fraud_prevalence": 0.05729222234076603,
+        "frauds": 1074,
+        "precision": 0.3107769423558897,
+        "recall": 0.2309124767225326,
+        "rows": 18746,
+        "tn": 17122,
+        "tp": 248
+      }
+    },
+    "RULES_ONLY": {
+      "CASH_IN": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 45107,
+        "tn": 45107,
+        "tp": 0
+      },
+      "CASH_OUT": {
+        "fn": 734,
+        "fp": 1,
+        "fraud_prevalence": 0.01692004726270185,
+        "frauds": 1074,
+        "precision": 0.9970674486803519,
+        "recall": 0.3165735567970205,
+        "rows": 63475,
+        "tn": 62400,
+        "tp": 340
+      },
+      "DEBIT": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 1549,
+        "tn": 1549,
+        "tp": 0
+      },
+      "PAYMENT": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 67724,
+        "tn": 67724,
+        "tp": 0
+      },
+      "TRANSFER": {
+        "fn": 1020,
+        "fp": 38,
+        "fraud_prevalence": 0.05729222234076603,
+        "frauds": 1074,
+        "precision": 0.5869565217391305,
+        "recall": 0.05027932960893855,
+        "rows": 18746,
+        "tn": 17634,
+        "tp": 54
+      }
+    },
+    "SIMPLE_HYBRID": {
+      "CASH_IN": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 45107,
+        "tn": 45107,
+        "tp": 0
+      },
+      "CASH_OUT": {
+        "fn": 734,
+        "fp": 1,
+        "fraud_prevalence": 0.01692004726270185,
+        "frauds": 1074,
+        "precision": 0.9970674486803519,
+        "recall": 0.3165735567970205,
+        "rows": 63475,
+        "tn": 62400,
+        "tp": 340
+      },
+      "DEBIT": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 1549,
+        "tn": 1549,
+        "tp": 0
+      },
+      "PAYMENT": {
+        "fn": 0,
+        "fp": 0,
+        "fraud_prevalence": 0.0,
+        "frauds": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "rows": 67724,
+        "tn": 67724,
+        "tp": 0
+      },
+      "TRANSFER": {
+        "fn": 912,
+        "fp": 133,
+        "fraud_prevalence": 0.05729222234076603,
+        "frauds": 1074,
+        "precision": 0.5491525423728814,
+        "recall": 0.15083798882681565,
+        "rows": 18746,
+        "tn": 17539,
+        "tp": 162
+      }
+    }
+  },
+  "conflicts": {
+    "BOTH_HIGH": {
+      "fn": 4,
+      "fp": 21,
+      "fraud_prevalence": 0.58,
+      "frauds": 29,
+      "precision": 0.5434782608695652,
+      "recall": 0.8620689655172413,
+      "rows": 50,
+      "tn": 0,
+      "tp": 25
+    },
+    "BOTH_LOW": {
+      "fn": 1535,
+      "fp": 0,
+      "fraud_prevalence": 0.007854876675877597,
+      "frauds": 1535,
+      "precision": 0.0,
+      "recall": 0.0,
+      "rows": 195420,
+      "tn": 193885,
+      "tp": 0
+    },
+    "ML_ONLY_HIGH": {
+      "fn": 111,
+      "fp": 95,
+      "fraud_prevalence": 0.2927807486631016,
+      "frauds": 219,
+      "precision": 0.5320197044334976,
+      "recall": 0.4931506849315068,
+      "rows": 748,
+      "tn": 434,
+      "tp": 108
+    },
+    "RULES_ONLY_HIGH": {
+      "fn": 0,
+      "fp": 18,
+      "fraud_prevalence": 0.9530026109660574,
+      "frauds": 365,
+      "precision": 0.9530026109660574,
+      "recall": 1.0,
+      "rows": 383,
+      "tn": 0,
+      "tp": 365
+    }
+  }
+}
